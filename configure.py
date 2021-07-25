@@ -31,3 +31,10 @@ class configuration(object):
         self.channel  = 1
         self.height   = 28
         self.width    = 28
+
+        self.attack_arguments={}
+        self.defense_arguments = {} 
+        
+        #代码中实现了将攻击防御的参数传出来并且记录保存的功能
+        #用于完成仅对于攻击、防御算法内置参数调参测试结果的功能
+        #详细用法请阅读README.md中的教程以及utils.py代码

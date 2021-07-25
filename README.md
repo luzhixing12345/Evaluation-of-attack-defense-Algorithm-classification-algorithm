@@ -20,6 +20,7 @@
 - tensorflow 2.1.0
 - numpy 1.21.0
 - matplotlib 3.3.4
+- openpyxl 
 
 #### 设计思路
 
@@ -45,7 +46,11 @@
 
 ##### 设计attack.py调用攻击算法，测评，并且保存得到的tensor，传给defense使用
 
-##### 设计defense.py调用防御算法，测评，流程结束
+##### 设计defense.py调用防御算法，测评
+
+##### 设计了utils.py 完成所有测评函数，并且将记录保存至excel记录下来
+
+##### 流程结束
 
 
 
@@ -55,14 +60,38 @@
 python start.py --dataset MNIST --network Net --attack FGSM --defense BDR
 ```
 
-注：
+##### 注：
 
-数据集的选择只能是pytorch中自带的，不同数据集在调用时传入的参数不同，详细细节请阅读代码dataset.py，网络的模型只有笔者写的两个，Net/NeuralNetwork
+##### 数据集的选择只能是pytorch中自带的，不同数据集在调用时传入的参数不同，详细细节请阅读代码dataset.py，网络的模型只有笔者写的两个，Net/NeuralNetwork
 
-攻击算法只引用了ares.attack 中的三个算法 Deepfool、 FGSM 、MIM
+##### 攻击算法只引用了ares.attack 中的三个算法 Deepfool、 FGSM 、MIM
 
-防御算法引用了ares.defense的两个BDR、JPEG
+##### 防御算法引用了ares.defense的两个BDR、JPEG
 
-使用时可自行替换
+##### 使用时可自行替换
 
-更多细节请阅读代码文档，内附详细注释
+##### 更多细节请阅读代码文档，内附详细注释
+
+
+
+#### 记录格式
+
+##### 笔者测试了MNIST/Fashion_MNIST两个数据集在Net/NeuralNetwork两个网络上的训练效果
+
+##### 并且将训练和测试中的训练损失和准确率都绘制成图像，保存在./train&test文件夹下，每组两种图片，一共八张
+
+##### 同时针对四种组合分别调用攻击算法MIM/FGSM/deepfool,防御算法BDR/JPEG,并且自己设计了一种表格用于记录，详细信息可以参考代码以及./result.xlsx文件中的数据格式
+
+##### 同时考虑到可能会对攻击函数以及防御函数调参，笔者也在每一次实验中记录了攻击函数和防御函数的参数信息，并且一同保存记录到了excel对应位置下
+
+##### 注意：如果重复上次实验，会覆盖掉原表格中位置的信息，但不会覆盖实验记录信息
+
+##### 细节请查阅utils.py代码
+
+
+
+#### 说明：
+
+##### 笔者给出了自己测试的实验结果，包含train&test文件夹下的图片以及result.xlsx文件，如果希望重复实验可以删除掉train&test文件夹下所有图片（不要删除文件夹），以及result.xlsx文件重复实验
+
+##### 本项目仅供参考，如有不妥之处还望指正

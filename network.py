@@ -48,7 +48,7 @@ class Net(nn.Module):
 #两个网络都采用装饰器，为后续攻击防御提供了更多参数支持
 #pytorch教学文档中提供的网络
 #详见pytorch官方教学文档https://pytorch.org/tutorials/beginner/basics/intro.html
-@pytorch_classifier_with_logits(n_class=1, x_min=0.0, x_max=1.0,x_shape=(1,28, 28), x_dtype=tf.float32, y_dtype=tf.int32)
+@pytorch_classifier_with_logits(n_class=10, x_min=0.0, x_max=1.0,x_shape=(1,28, 28), x_dtype=tf.float32, y_dtype=tf.int32)
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super().__init__()
@@ -110,7 +110,7 @@ def test(network,test_data,loss_fn,test_accurency,tf=False):
           test_loss += loss_fn(output, target)
           correct += (output.argmax(1) == target).type(torch.float).sum().item()
     test_loss /= len(test_data.dataset)
-    test_accurency.append(100.0 *correct / len(test_data.dataset))
+    test_accurency.append(100. *correct / len(test_data.dataset))
     print('\nTest set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
       test_loss, correct, len(test_data.dataset),
       100. * correct / len(test_data.dataset)))
@@ -131,5 +131,7 @@ def test_adv(network,test_data,loss_fn,cfg,tf=False):
     print('\nTest set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
       test_loss, correct, (len(test_data)*cfg.batch_size_test),
       100. * correct / (len(test_data)*cfg.batch_size_test)))
+
+    return 100. * correct / (len(test_data)*cfg.batch_size_test)
 
 test_def = test_adv

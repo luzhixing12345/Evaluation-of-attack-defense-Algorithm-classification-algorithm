@@ -8,7 +8,8 @@ from dataset import get_dataset
 from network import get_model_pytorch,get_model_tf,train,test
 from attack import start_attack
 from defense import start_defense
-from evaluation import evaluate_train_loss,evaluate_accurency,show_pic
+from evaluation import evaluate
+from utils import record
 import torch.optim as optim
 import torch
 
@@ -66,8 +67,7 @@ if __name__ == "__main__":
         train(model_cuda._inner,train_data,optimizer,loss_fn,epoch,train_losses,train_counter)
         test(model_cuda._inner,test_data,loss_fn,test_accurency)
 
-    evaluate_train_loss(train_losses,train_counter)
-    evaluate_accurency(test_accurency,test_counter)
+    evaluate(cfg,train_losses,train_counter,test_accurency,test_counter)
 
     torch.save(model_cuda._inner.state_dict(),'model_trained.pth')#保存模型
     
@@ -76,8 +76,11 @@ if __name__ == "__main__":
 
 
     with tf.compat.v1.Session() as sess:
-        adv_dataset= start_attack(model,cfg,loss_fn,sess,test_data)#attack
-    start_defense(model,cfg,loss_fn,adv_dataset) #defense
+        adv_dataset,adv_result= start_attack(model,cfg,loss_fn,sess,test_data)#attack
+    def_result = start_defense(model,cfg,loss_fn,adv_dataset) #defense
 
+    record(cfg,test_accurency[-1],adv_result,def_result)
+    
+    print('You have successfully saved the result ! ')
 
     print('You have done all the job !')

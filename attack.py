@@ -25,14 +25,14 @@ def start_attack(model,cfg,loss_fn,session,test_data):
         adv_data = attack.batch_attack(data, ys=target)
         adv_test_data.append([torch.from_numpy(adv_data),target])
         print('Finshed one batch of attack !')
-    test_adv(model._inner,adv_test_data,loss_fn,cfg,tf= True)
-    return adv_test_data
+    adv_result = test_adv(model._inner,adv_test_data,loss_fn,cfg,tf= True)
+    return adv_test_data,adv_result
 
 
 def find_attack_method(model,cfg,session):
-    return attack_set[cfg.attack_method](model,cfg.batch_size_test,session)
+    return attack_set[cfg.attack_method](model,cfg.batch_size_test,session,cfg)
 
-def atk_MIM(model,batch_size,session):
+def atk_MIM(model,batch_size,session,cfg):
     loss = CrossEntropyLoss(model)
     attack = MIM(
         model=model,
@@ -40,16 +40,16 @@ def atk_MIM(model,batch_size,session):
         loss=loss,
         goal='ut',
         distance_metric='l_inf',
-        session=session,
+        session=session
     )
-    attack.config(
-        iteration=10,
-        decay_factor=1.0,
-        magnitude=8.0 / 255.0,
-        alpha=1.0 / 255.0,
-    )
+    config = {        'iteration':10,
+                      'decay_factor':1.0,
+                      'magnitude':8.0 / 255.0,
+                      'alpha':1.0 / 255.0}
+    attack.config(iteration=10,decay_factor=1.0,magnitude=8.0 / 255.0,alpha=1.0 / 255.0)
+    cfg.attack_arguments = config
     return attack
-def atk_FGSM(model,batch_size,session):
+def atk_FGSM(model,batch_size,session,cfg):
     loss = CrossEntropyLoss(model)
     attack = FGSM(
         model=model,
@@ -59,27 +59,29 @@ def atk_FGSM(model,batch_size,session):
         distance_metric='l_inf',
         session=session,
     )
-    attack.config(
-        iteration=10,
-        decay_factor=1.0,
-        magnitude=8.0 / 255.0,
-        alpha=1.0 / 255.0,
-    )
+    config = {        'iteration':10,
+                      'decay_factor':1.0,
+                      'magnitude':8.0 / 255.0,
+                      'alpha':1.0 / 255.0}
+    attack.config(iteration=10,decay_factor=1.0,magnitude=8.0 / 255.0,alpha=1.0 / 255.0)
+    cfg.attack_arguments = config
     return attack
 
 
-def atk_DF(model,batch_size,session):
+def atk_DF(model,batch_size,session,cfg):
     attack = DeepFool(
         model=model,
         batch_size=batch_size,
         distance_metric='l_inf',
         session=session,
     )
-    attack.config(
-        iteration=10,
-        overshot =0.02
-    )
+    config = {
+        'iteration':10,
+        'overshot':0.02
+    }
+    attack.config(iteration=10,overshot=0.02)
+    cfg.attack_arguments = config
     return attack
 
 
-attack_set = {'MIM':atk_MIM,'deepfool':atk_DF,'FGSM':atk_FGSM}
+attack_set = {'MIM':atk_MIM,'FGSM':atk_FGSM,'deepfool':atk_DF,}

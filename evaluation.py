@@ -1,22 +1,29 @@
 import matplotlib.pyplot as plt
+import os
+
+
+def evaluate(cfg,train_losses,train_counter,test_accurency,test_counter):
+    evaluate_train_loss(cfg,train_losses,train_counter)
+    evaluate_accurency(cfg,test_accurency,test_counter)
 
 
 
-
-def evaluate_train_loss(train_losses,train_counter):
+def evaluate_train_loss(cfg,train_losses,train_counter):
     plt.plot(train_counter, train_losses, color='blue')
     plt.xlabel('number of training examples seen')
     plt.ylabel('negative log likelihood loss')
-    plt.savefig('train_loss.jpg')
-    plt.show()
+    plt.savefig('./train&test/'+cfg.dataset+'_'+cfg.network+'_train_loss.jpg')
+    plt.close()
+    #plt.show()
     
 
-def evaluate_accurency(test_accurency,test_counter):
-    plt.plot(test_accurency,test_counter, color='blue')
+def evaluate_accurency(cfg,test_accurency,test_counter):
+    plt.plot(test_counter,test_accurency,color='blue')
     plt.xlabel('epoch')
     plt.ylabel('accurency')
-    plt.savefig('test_accurency.jpg')
-    plt.show()
+    plt.savefig('./train&test/'+cfg.dataset+'_'+cfg.network+'_test_accurency.jpg')
+    plt.close()
+    #plt.show()
 
 def show_pic(example_data,example_targets):
     for i in range(16):
@@ -27,4 +34,3 @@ def show_pic(example_data,example_targets):
         plt.xticks([])
         plt.yticks([])
     plt.show()
-    
